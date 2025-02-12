@@ -51,7 +51,28 @@ public class Account : IUserAccount
 
             Console.WriteLine("Password");
             string password = Console.ReadLine()!;
-            ReadPassword(password);
+            while (true)
+            {
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                if (keyInfo.Key == ConsoleKey.Enter)
+                {
+                    Console.WriteLine();
+                    break;
+                }
+                else if (keyInfo.Key == ConsoleKey.Backspace)
+                {
+                    if (password.Length > 0)
+                    {
+                        Console.Write("\b \b");
+                        password = password.Substring(0, password.Length - 1);
+                    }
+                }
+                else
+                {
+                    Console.Write("*");
+                    password += keyInfo.KeyChar;
+                }
+            }
 
             Console.WriteLine("Confirm password");
             string confirmPassword = Console.ReadLine()!;
@@ -63,8 +84,28 @@ public class Account : IUserAccount
 
             Console.WriteLine("Enter Pin");
             string pin = Console.ReadLine()!;
-            ReadPin(pin);
-
+             while (true)
+        {
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            if (keyInfo.Key == ConsoleKey.Enter)
+            {
+                Console.WriteLine();
+                break;
+            }
+            else if (keyInfo.Key == ConsoleKey.Backspace)
+            {
+                if (pin.Length > 0)
+                {
+                    Console.Write("\b \b");
+                    pin = pin.Substring(0, pin.Length - 1);
+                }
+            }
+            else
+            {
+                Console.Write("*");
+                pin += keyInfo.KeyChar;
+            }
+        }
             decimal accountBalance = 0.00M;
 
             Random random = new Random();
@@ -329,58 +370,7 @@ public class Account : IUserAccount
     //     return;
     // }
 
-    public string ReadPassword(string password)
-    {
-        while (true)
-        {
-            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-            if (keyInfo.Key == ConsoleKey.Enter)
-            {
-                Console.WriteLine();
-                break;
-            }
-            else if (keyInfo.Key == ConsoleKey.Backspace)
-            {
-                if (password.Length > 0)
-                {
-                    Console.Write("\b \b");
-                    password = password.Substring(0, password.Length - 1);
-                }
-            }
-            else
-            {
-                Console.Write("*");
-                password += keyInfo.KeyChar;
-            }
-        }
-        return password;
-    }
-    public string ReadPin(string pin)
-    {
-        while (true)
-        {
-            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-            if (keyInfo.Key == ConsoleKey.Enter)
-            {
-                Console.WriteLine();
-                break;
-            }
-            else if (keyInfo.Key == ConsoleKey.Backspace)
-            {
-                if (pin.Length > 0)
-                {
-                    Console.Write("\b \b");
-                    pin = pin.Substring(0, pin.Length - 1);
-                }
-            }
-            else
-            {
-                Console.Write("*");
-                pin += keyInfo.KeyChar;
-            }
-        }
-        return pin;
-    }
+
     public void ValidateDateOfBirth(string dateOfBirth)
     {
         string dateOfBIrthPattern = @"^(MM/dd/yyyy)$";
