@@ -30,27 +30,28 @@ public class Account : IUserAccount
 
             Console.WriteLine("Mobile number");
             string mobileNumber = Console.ReadLine()!;
-            ValidateMobleNumber(mobileNumber);
+            ValidateMobileNumber(mobileNumber);
 
-            Console.WriteLine("Gender");
+            Console.WriteLine("Gender (Male or Female)");
             string gender = Console.ReadLine()!;
 
             Console.WriteLine("Date of birth (MM/dd/yyyy");
             string dateOfBirth = Console.ReadLine()!;
             ValidateDateOfBirth(dateOfBirth);
 
-            Console.WriteLine("Marital status");
+            Console.WriteLine("Marital status (Single or Married)");
             string maritalStatus = Console.ReadLine()!;
 
             Console.WriteLine("Email Address");
             string emailAddress = Console.ReadLine()!;
+            ValidateEmailAddress(emailAddress);
 
             Console.WriteLine("Address");
             string address = Console.ReadLine()!;
 
             Console.WriteLine("Password");
             string password = Console.ReadLine()!;
-            ValidatePassword(password);
+            ReadPassword(password);
 
             Console.WriteLine("Confirm password");
             string confirmPassword = Console.ReadLine()!;
@@ -59,16 +60,19 @@ public class Account : IUserAccount
                 Console.WriteLine("confirm again");
                 return;
             }
+
+            Console.WriteLine("Enter Pin");
+            string pin = Console.ReadLine()!;
+            ReadPin(pin);
+
             decimal accountBalance = 0.00M;
 
             Random random = new Random();
-            int pin = random.Next(1000, 9000);
-
             long accountNumber = random.NextInt64(1000000000, 9999999999);
 
             long bankVerificationNumber = random.NextInt64(10000000000, 99999999999);
 
-            decimal amount = 0.00M; 
+            decimal amount = 0.00M;
 
             Console.Clear();
             CustomerIdentification customerIdentification = new CustomerIdentification(customerId, surName, firstName, middleName, mobileNumber, dateOfBirth, gender, maritalStatus, emailAddress, address, password, accountBalance, pin, accountNumber, bankVerificationNumber, amount);
@@ -129,33 +133,45 @@ public class Account : IUserAccount
             }
         }
     }
-    public void LoginSystem()
+    public bool LoginSystem()
     {
         try
         {
-            Console.WriteLine("Enter your Pin");
-            int pin = int.Parse(Console.ReadLine()!);
-            CustomerIdentification? account = Accounts.Find(a => a.Pin == pin);
+            Console.WriteLine("Enter your E-mail Address:");
+            string emailAddress = Console.ReadLine()!;
+            CustomerIdentification? account = Accounts.Find(a => a.EmailAddress == emailAddress);
             if (account != null)
             {
                 Console.WriteLine("grant access");
             }
             else
             {
-                Console.WriteLine("incorrect pin");
-                return;
+                Console.WriteLine("incorrect E-mail Address");
+            }
+
+            Console.WriteLine("Enter your Password:");
+            string password = Console.ReadLine()!;
+            CustomerIdentification? accounts = Accounts.Find(a => a.Password == password);
+            if (accounts != null)
+            {
+                Console.WriteLine("grant access");
+            }
+            else
+            {
+                Console.WriteLine("incorrect Password");
+                return false;
             }
         }
         catch (Exception)
         {
             throw new Exception("The account number you inputed does not exist");
         }
-        return;
+        return true;
 
     }
     public void TransactionLog()
     {
-        int? transactionType = Utility.SelectEnum("Deposit, Check Balance, Withdrawal:", 1, 3);
+        int? transactionType = Vaues.SelectEnum("Deposit, Check Balance, Withdrawal:", 1, 3);
         foreach (var transaction in Accounts)
         {
             Console.WriteLine($"{transaction.CustomersId}  {transaction.TransactionDate}  {transaction.Amount}  {transactionType}  {transaction.Amount}");
@@ -172,12 +188,30 @@ public class Account : IUserAccount
             Console.WriteLine("Enter Amount");
             decimal amount = Convert.ToDecimal(Console.ReadLine());
 
-            CustomerIdentification? account = Accounts.Find(x => x.AccountNumber == accountNumber);
+            Console.WriteLine("Enter your Pin");
+            string pin = Console.ReadLine()!;
+            CustomerIdentification? account = Accounts.Find(a => a.Pin == pin);
+            if (account != null)
+            {
+                Console.WriteLine("grant access");
+            }
+            else
+            {
+                Console.WriteLine("incorrect pin");
+                return;
+            }
+
+            CustomerIdentification? accounts = Accounts.Find(x => x.AccountNumber == accountNumber);
             if (account != null)
             {
                 account.AccountBalance += amount;
                 Console.WriteLine($"This account {accountNumber} has beign deposited with the sum of ${amount} dollars Successfully");
             }
+            else
+            {
+                Console.WriteLine("Invalid Account Number");
+            }
+
         }
         catch (Exception)
         {
@@ -202,11 +236,10 @@ public class Account : IUserAccount
         }
         catch (IOException)
         {
-            Console.WriteLine($"The account number you entered does not exist");
-            return;
+            throw new Exception($"The account number you entered does not exist");
         }
     }
-    public void Withdrawal()
+    public bool Withdrawal()
     {
         try
         {
@@ -217,7 +250,20 @@ public class Account : IUserAccount
             Console.WriteLine("Enter Amount");
             decimal amount = Convert.ToDecimal(Console.ReadLine());
 
-            CustomerIdentification? account = Accounts.Find(x => x.AccountNumber == accountNumber);
+            Console.WriteLine("Enter your Pin");
+            string pin = Console.ReadLine()!;
+            CustomerIdentification? account = Accounts.Find(a => a.Pin == pin);
+            if (account != null)
+            {
+                Console.WriteLine("grant access");
+            }
+            else
+            {
+                Console.WriteLine("incorrect pin");
+                return false;
+            }
+
+            CustomerIdentification? accounts = Accounts.Find(x => x.AccountNumber == accountNumber);
             if (account != null)
             {
                 account.AccountBalance -= amount;
@@ -228,47 +274,112 @@ public class Account : IUserAccount
         {
             Console.WriteLine("The account number you inputed does not exist.");
         }
+        return true;
     }
 
-    public bool ValidateNames(string names)
+    public void ValidateNames(string names)
     {
         if (names.Length < 3)
         {
-            Console.WriteLine("Username must not be less than three charactrers");
-            return false;
+            throw new Exception("Names must be atleast three characters.");
         }
-        string namePattern = @"^[a-zA-Z@]+(?: [a-zA-Z@]+)*$";
-        if (!Regex.IsMatch(names, namePattern))
+        string namesPattern = @"^[a-zA-Z\s@]+$";
+        if (!Regex.IsMatch(names, namesPattern))
         {
-            return false;
+            throw new Exception("Names can only contain letters, White Spaces and '@'.");
         }
-        return true;
+        return;
     }
-    public bool ValidateMobleNumber(string mobileNumber)
+    public void ValidateEmailAddress(string emailAddress)
     {
-        string phoneNumberPattern = @"^ [0-9]+ $";
-        if (Regex.IsMatch(mobileNumber, phoneNumberPattern))
+        if (emailAddress.Length < 8)
         {
-            throw new Exception("Phone number can not contain a special character(s).");
+            throw new Exception("E-mail Address must be atleast eight characters.");
+        }
+        string emailAddressPattern = @"^[a-zA-Z\s@]+$";
+        if (Regex.IsMatch(emailAddress, emailAddressPattern))
+        {
+            throw new Exception("E-mail Addtress can only contain letters, White Spaces and '@'.");
+        }
+        return;
+    }
+    public void ValidateMobileNumber(string mobileNumber)
+    {
+        string mobileNumberPattern = @"^ [0-9]+ $";
+        if (Regex.IsMatch(mobileNumber, mobileNumberPattern))
+        {
+            throw new Exception("Mobile Number can not contain a special character(s).");
         }
         if (mobileNumber.Length < 11 || mobileNumber.Length > 11)
         {
-            throw new Exception("Phone number must be at least 11 digit.");
+            throw new Exception("Mobile Number must be at least 11 digit.");
         }
-        return true;
     }
-    public bool ValidatePassword(string password)
+    // public void ValidatePassword(string password)
+    // {
+    //     string passwordPattern = @"^ [0-9]+ $";
+    //     if (Regex.IsMatch(password, passwordPattern))
+    //     {
+    //         throw new Exception("Password can not contain any special character(s).");
+    //     }
+    //     if (password.Length < 6 || password.Length > 6)
+    //     {
+    //         throw new Exception("password must not be less than or greater than six digits.");
+    //     }
+    //     return;
+    // }
+
+    public string ReadPassword(string password)
     {
-        string passwordPattern = @"^ [0-9]+ $";
-        if (Regex.IsMatch(password, passwordPattern))
+        while (true)
         {
-            throw new Exception("Phone number can not contain a special character(s).");
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            if (keyInfo.Key == ConsoleKey.Enter)
+            {
+                Console.WriteLine();
+                break;
+            }
+            else if (keyInfo.Key == ConsoleKey.Backspace)
+            {
+                if (password.Length > 0)
+                {
+                    Console.Write("\b \b");
+                    password = password.Substring(0, password.Length - 1);
+                }
+            }
+            else
+            {
+                Console.Write("*");
+                password += keyInfo.KeyChar;
+            }
         }
-        if (password.Length < 6 || password.Length > 6)
+        return password;
+    }
+    public string ReadPin(string pin)
+    {
+        while (true)
         {
-            throw new Exception("password must not be less than or greater than six digits.");
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            if (keyInfo.Key == ConsoleKey.Enter)
+            {
+                Console.WriteLine();
+                break;
+            }
+            else if (keyInfo.Key == ConsoleKey.Backspace)
+            {
+                if (pin.Length > 0)
+                {
+                    Console.Write("\b \b");
+                    pin = pin.Substring(0, pin.Length - 1);
+                }
+            }
+            else
+            {
+                Console.Write("*");
+                pin += keyInfo.KeyChar;
+            }
         }
-        return true;
+        return pin;
     }
     public void ValidateDateOfBirth(string dateOfBirth)
     {
@@ -278,21 +389,21 @@ public class Account : IUserAccount
             throw new Exception("Date of birth can only be in this pattern (MM/dd/yyyy).");
         }
     }
-    //     public bool ValidateLoginPin(string pin)
-    //     {
-    //         string pinPattern = @"^ [0-9]+ $";
-    //         if (Regex.IsMatch(pin, pinPattern))
-    //         {
-    //             Console.WriteLine("Pin can not contain any form of character(s)");
-    //             return false;
-    //         }
-    //         if (pin.Length < 4 || pin.Length > 4)
-    //         {
-    //             Console.WriteLine("Pin must not be less than or greater than four digits");
-    //             return false;
-    //         }
-    //         return true;
-    //     }
+    public bool ValidatePin(string pin)
+    {
+        string pinPattern = @"^ [0-9]+ $";
+        if (Regex.IsMatch(pin, pinPattern))
+        {
+            Console.WriteLine("Pin can not contain any form of character(s)");
+            return false;
+        }
+        if (pin.Length < 4 || pin.Length > 4)
+        {
+            Console.WriteLine("Pin must not be less than or greater than four digits");
+            return false;
+        }
+        return true;
+    }
     //     public bool ValidateBankCode(string loginPin)
     //     {
     //         string bankCodePattern = @"^\*123#$";

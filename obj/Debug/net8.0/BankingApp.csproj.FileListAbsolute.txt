@@ -16,3 +16,4 @@ C:\Users\SYS-232\OneDrive\Desktop\BankingApp\bin\Debug\net8.0\ConsoleTables.dll
 C:\Users\SYS-232\OneDrive\Desktop\BankingApp\bin\Debug\net8.0\Wcwidth.dll
 C:\Users\SYS-232\OneDrive\Desktop\BankingApp\obj\Debug\net8.0\BankingApp.csproj.AssemblyReference.cache
 C:\Users\SYS-232\OneDrive\Desktop\BankingApp\obj\Debug\net8.0\BankingApp.csproj.Up2Date
+C:\Users\SYS-232\OneDrive\Desktop\BankingApp\obj\Debug\net8.0\BankingApp.sourcelink.json

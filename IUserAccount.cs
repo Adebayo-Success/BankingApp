@@ -3,6 +3,6 @@ public interface IUserAccount
     void CreateAccount();
     void MyProfile();
     void ProfileAccount();
-    void LoginSystem();
+    bool LoginSystem();
     void TransactionLog();
 }

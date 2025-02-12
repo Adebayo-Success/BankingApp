@@ -1,4 +1,4 @@
-public static class Utility
+public static class Vaues
 {
     public static int? SelectEnum(string screenMessages, int validStart, int validEnd)
     {

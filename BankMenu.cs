@@ -7,13 +7,14 @@ public class BankMenu
         Account account1 = new();
         bool running = true;
 
+        Console.BackgroundColor = ConsoleColor.White;
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write("\x1B[1m");
+        Console.WriteLine("Welcome to Hasbunallah Banking App");
+        Console.ResetColor();
+        
         while (running)
         {
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("\x1B[1m");
-            Console.WriteLine("Welcome to Hasbunallah Banking App");
-            Console.ResetColor();
             Console.WriteLine("Press any key to contrinue: ");
             Console.ReadKey();
             Console.WriteLine("Enter your option from 0 - 6:");
