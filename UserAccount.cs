@@ -50,7 +50,7 @@ public class Account : IUserAccount
             string address = Console.ReadLine()!;
 
             Console.WriteLine("Password");
-            string password = Console.ReadLine()!;
+            string password = "";
             while (true)
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
@@ -74,38 +74,30 @@ public class Account : IUserAccount
                 }
             }
 
-            Console.WriteLine("Confirm password");
-            string confirmPassword = Console.ReadLine()!;
-            if (confirmPassword != password)
-            {
-                Console.WriteLine("confirm again");
-                return;
-            }
-
             Console.WriteLine("Enter Pin");
-            string pin = Console.ReadLine()!;
-             while (true)
-        {
-            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-            if (keyInfo.Key == ConsoleKey.Enter)
+            string pin = "";
+            while (true)
             {
-                Console.WriteLine();
-                break;
-            }
-            else if (keyInfo.Key == ConsoleKey.Backspace)
-            {
-                if (pin.Length > 0)
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                if (keyInfo.Key == ConsoleKey.Enter)
                 {
-                    Console.Write("\b \b");
-                    pin = pin.Substring(0, pin.Length - 1);
+                    Console.WriteLine();
+                    break;
+                }
+                else if (keyInfo.Key == ConsoleKey.Backspace)
+                {
+                    if (pin.Length > 0)
+                    {
+                        Console.Write("\b \b");
+                        pin = pin.Substring(0, pin.Length - 1);
+                    }
+                }
+                else
+                {
+                    Console.Write("*");
+                    pin += keyInfo.KeyChar;
                 }
             }
-            else
-            {
-                Console.Write("*");
-                pin += keyInfo.KeyChar;
-            }
-        }
             decimal accountBalance = 0.00M;
 
             Random random = new Random();
@@ -174,7 +166,7 @@ public class Account : IUserAccount
             }
         }
     }
-    public bool LoginSystem()
+    public void LoginSystem()
     {
         try
         {
@@ -188,26 +180,49 @@ public class Account : IUserAccount
             else
             {
                 Console.WriteLine("incorrect E-mail Address");
+                return;
             }
 
             Console.WriteLine("Enter your Password:");
-            string password = Console.ReadLine()!;
+            string password = "";
             CustomerIdentification? accounts = Accounts.Find(a => a.Password == password);
             if (accounts != null)
             {
+                while (true)
+                {
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                    if (keyInfo.Key == ConsoleKey.Enter)
+                    {
+                        Console.WriteLine();
+                        break;
+                    }
+                    else if (keyInfo.Key == ConsoleKey.Backspace)
+                    {
+                        if (password.Length > 0)
+                        {
+                            Console.Write("\b \b");
+                            password = password.Substring(0, password.Length - 1);
+                        }
+                    }
+                    else
+                    {
+                        Console.Write("*");
+                        password += keyInfo.KeyChar;
+                    }
+                }
                 Console.WriteLine("grant access");
             }
             else
             {
                 Console.WriteLine("incorrect Password");
-                return false;
+                return;
             }
         }
         catch (Exception)
         {
-            throw new Exception("The account number you inputed does not exist");
+            throw new Exception("An error occured!");
         }
-        return true;
+        return;
 
     }
     public void TransactionLog()

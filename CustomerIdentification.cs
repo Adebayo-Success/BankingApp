@@ -17,7 +17,6 @@ public class CustomerIdentification
     public long AccountNumber { get; set; }
     public long BankVerificationNumber { get; set; }
     public DateTime TransactionDate { get; set; }
-    // public int? Type {get; set;}
     public decimal Amount {get; set;}
     public CustomerIdentification(int customerId, string surName, string firstName, string middleName, string mobileNumber, string dateOfBirth, string gender, string maritalStatus, string emailAddress, string address, string password,  decimal accountBalance, string pin, long accountNumber, long bankVerificationNumber, decimal amount)
     {
